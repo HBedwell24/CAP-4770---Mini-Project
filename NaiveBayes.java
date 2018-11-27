@@ -1,16 +1,15 @@
 // URL: https://github.com/kinejohnsrud/naive-bayesian-spam-filter/tree/master/spam-filter/src/bayes
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -26,8 +25,8 @@ public class NaiveBayes {
 	}
 	
 	// transforms the train data by tokenization and adding spam/ham labels according to file name
-	public void transformTrainData(String path) throws IOException {
-		
+	public int transformTrainData(String path) throws IOException {
+		int spamTotal = 0;
 		// create file "train.txt" to format the training data
 		final ZipFile trainZipFile = new ZipFile(path);		
 		PrintWriter pw = new PrintWriter(new FileOutputStream(new File("train.txt"),true));
@@ -41,6 +40,7 @@ public class NaiveBayes {
 	        // if file name starts with "spmsg", add "spam" label to text file
 	        if (entry.getName().startsWith("spmsg")) {
 	        	pw.print("spam\t");
+	        	spamTotal++;
 	        }
 	        // if file name doesn't start with "spmsg", add "ham" label to text file
 	        else {
@@ -62,6 +62,7 @@ public class NaiveBayes {
 	    }
 	    pw.close();
 	    trainZipFile.close();
+		return spamTotal;
 	}
 
 	// uses a train-file to make a hashmap containing all words, and their probability of being spam
@@ -70,7 +71,7 @@ public class NaiveBayes {
 		int totalSpamCount = 0;
 		int totalHamCount = 0;
 		
-		transformTrainData(path);
+		int spamTotal = transformTrainData(path);
 		BufferedReader in = new BufferedReader(new FileReader("train.txt"));
 		String line = in.readLine();
 		while (line != null){
@@ -105,7 +106,7 @@ public class NaiveBayes {
 		for (String key : words.keySet()) {
 			words.get(key).calculateProbability(totalSpamCount, totalHamCount);
 		}
-		return totalSpamCount;
+		return spamTotal;
 	}
 	
 	// takes the text to be analyzed as input, and produces predictions by form of 'spam' or 'ham'
@@ -186,13 +187,17 @@ public class NaiveBayes {
 	
 	public void accuracy(int spamCount, int spamTotal) {
 		
-		float accuracy;
+		// results from training data
+		System.out.println("The number of spam files found within the training data was: " + spamTotal);
 		
 		// results from test data
-		System.out.println(spamCount);
-		// results from training data
-		System.out.println(spamTotal);
-		accuracy = (spamCount/spamTotal)*100;
-		System.out.println("The Naive Bayes algorithm successfully predicted " + accuracy + "% of the spam emails found in the test set!");
+		System.out.println("The number of spam files found within the test data was: " + spamCount);
+		
+		// print the accuracy of the algorithm
+		float accuracyAmount = ((float)spamCount/spamTotal)*100;
+		
+		DecimalFormat df = new DecimalFormat();
+		df.setMaximumFractionDigits(2);
+		System.out.println("The Naive Bayes algorithm successfully predicted " + df.format(accuracyAmount) + "% of the spam emails found in the test set!");
 	}
 }
