@@ -19,8 +19,7 @@ import java.util.zip.ZipFile;
 
 public class NaiveBayes {
 	HashMap<String, Word> words = new HashMap<String, Word>();
-	BufferedWriter out;
-
+	
 	// NaiveBayes Constructor
 	public NaiveBayes() {
 		
@@ -30,11 +29,11 @@ public class NaiveBayes {
 	public void transformTrainData(String path) throws IOException {
 		
 		// create file "train.txt" to format the training data
-		final ZipFile zipFile = new ZipFile(path);		
+		final ZipFile trainZipFile = new ZipFile(path);		
 		PrintWriter pw = new PrintWriter(new FileOutputStream(new File("train.txt"),true));
 		
 		// iterate through each file in the zip folder
-		final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+		final Enumeration<? extends ZipEntry> entries = trainZipFile.entries();
 	    while (entries.hasMoreElements()) {
 	        final ZipEntry entry = entries.nextElement();
 	        // System.out.println(entry.getName());
@@ -49,7 +48,7 @@ public class NaiveBayes {
 	        }
 	        
 	        // read, tokenize, and append words to "train.txt" file
-	        InputStream stream = zipFile.getInputStream(entry);
+	        InputStream stream = trainZipFile.getInputStream(entry);
 	        BufferedReader in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 	        String line;
 			while ((line = in.readLine()) != null) {
@@ -62,7 +61,7 @@ public class NaiveBayes {
 			stream.close();
 	    }
 	    pw.close();
-	    zipFile.close();
+	    trainZipFile.close();
 	}
 
 	// uses a train-file to make a hashmap containing all words, and their probability of being spam
@@ -111,15 +110,14 @@ public class NaiveBayes {
 	
 	// takes the text to be analyzed as input, and produces predictions by form of 'spam' or 'ham'
 	public int filter(String path) throws IOException {
-		final ZipFile file = new ZipFile(path);
+		final ZipFile testZipFile = new ZipFile(path);
 		int spamCount = 0;
 		try {
-			final Enumeration<? extends ZipEntry> entries = file.entries();
+			final Enumeration<? extends ZipEntry> entries = testZipFile.entries();
 		    while (entries.hasMoreElements()) {
 		    	
 		        final ZipEntry entry = entries.nextElement();
-		        InputStream stream = file.getInputStream(entry);
-		        this.out = new BufferedWriter(new FileWriter("predictions.txt"));
+		        InputStream stream = testZipFile.getInputStream(entry);
 		        BufferedReader in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 		        
 				String line;
@@ -128,19 +126,14 @@ public class NaiveBayes {
 						ArrayList<Word> sms = makeWordList(line);
 						boolean isSpam = calculateBayes(sms);
 						if(isSpam == true) {
-							this.out.write("spam");
 							spamCount++;
 						}
-						else if (isSpam == false) {
-							this.out.write("ham");
-						}
-					}
-					this.out.newLine();
-					line = in.readLine();
+					}					
 				}
 				in.close();
+				stream.close();
 			}
-		    this.out.close();
+		    testZipFile.close();
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -185,8 +178,7 @@ public class NaiveBayes {
 		
 		if(probOfSpam > 0.9f) {
 			return true;
-		}
-		
+		}		
 		else {
 			return false;
 		}
@@ -196,7 +188,9 @@ public class NaiveBayes {
 		
 		float accuracy;
 		
+		// results from test data
 		System.out.println(spamCount);
+		// results from training data
 		System.out.println(spamTotal);
 		accuracy = (spamCount/spamTotal)*100;
 		System.out.println("The Naive Bayes algorithm successfully predicted " + accuracy + "% of the spam emails found in the test set!");
