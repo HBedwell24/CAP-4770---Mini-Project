@@ -19,21 +19,19 @@ import java.util.zip.ZipFile;
 public class NaiveBayes {
 	
 	// global variables
-	int spamTotal = 0;
-	int hamTotal = 0;
+	int spamEmailTotal = 0;
+	int hamEmailTotal = 0;
+	int emailTotal = 0;
 	int totalSpamCount = 0;
 	int totalHamCount = 0;
-	int hamCount = 0;
 	int spamCount = 0;
+	int hamCount = 0;
+	int probEmailGivenHam = 0;
+	int probEmailGivenSpam = 0;	
 	
 	HashMap<String, Word> words = new HashMap<String, Word>();
 	
-	// NaiveBayes Constructor
-	public NaiveBayes() {
-		
-	}
-	
-	// transforms the train data by tokenization and adding spam/ham labels according to file name
+	// transforms the train data by tokenization and adds spam/ham labels according to file name
 	public void transformTrainData(String path) throws IOException {
 		// create file "train.txt" to format the training data
 		final ZipFile trainZipFile = new ZipFile(path);		
@@ -48,13 +46,17 @@ public class NaiveBayes {
 	        // if file name starts with "spmsg", add "spam" label to text file
 	        if (entry.getName().startsWith("spmsg")) {
 	        	pw.print("spam\t");
-	        	spamTotal++;
+	        	// increment number of spam email files
+	        	spamEmailTotal++;
 	        }
 	        // if file name doesn't start with "spmsg", add "ham" label to text file
 	        else {
 	        	pw.print("ham\t");
-	        	hamTotal++;
+	        	// increment number of ham email files
+	        	hamEmailTotal++;
 	        }
+	        // increment number of email files
+			emailTotal++;
 	        
 	        // read, tokenize, and append words to "train.txt" file
 	        InputStream stream = trainZipFile.getInputStream(entry);
@@ -87,19 +89,25 @@ public class NaiveBayes {
 					word = word.replaceAll("\\W", "");
 					word = word.toLowerCase();
 					Word w = null;
+					// if HashMap already contains word, access it
 					if(words.containsKey(word)) {
 						w = (Word) words.get(word);
 					}
+					// if HashMap doesn't contain word, add word to HashMap
 					else {
 						w = new Word(word);
 						words.put(word,w);
 					}
 					if(type.equals("ham")) {
+						// increment ham count for word
 						w.countHam();
+						// increment ham count for email
 						totalHamCount++;
 					}
 					else if(type.equals("spam")) {
+						// increment spam count for word
 						w.countSpam();
+						// increment spam count for email 
 						totalSpamCount++;
 					}		
 				}
@@ -107,8 +115,10 @@ public class NaiveBayes {
 			line = in.readLine();	
 		}
 		in.close();
-		for (String key : words.keySet()) {
-			words.get(key).calculateProbability(totalSpamCount, totalHamCount);
+		// loop through each word in the key set
+		for (String key : words.keySet()) {			
+			probEmailGivenSpam += words.get(key).calculateWordSpamProbability(totalSpamCount, words.size());
+			probEmailGivenHam += words.get(key).calculateWordHamProbability(totalHamCount, words.size());
 		}
 	}
 	
@@ -130,10 +140,12 @@ public class NaiveBayes {
 						ArrayList<Word> sms = makeWordList(line);
 						boolean isSpam = calculateBayes(sms);
 						if(isSpam == true) {
-							spamCount++;
+							// increment number of ham files in test set
+							hamCount++;
 						}
 						else if (isSpam == false) {
-							hamCount++;
+							// increment number of spam files in training set
+							spamCount++;
 						}
 					}					
 				}
@@ -145,7 +157,7 @@ public class NaiveBayes {
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		accuracy(spamCount, spamTotal, hamCount, hamTotal);
+		accuracy(spamCount, spamEmailTotal, hamCount, hamEmailTotal);
 	}
 
 	// make an arraylist of all words in an sms, set probability of spam to 0.4 if word is not known
@@ -171,34 +183,36 @@ public class NaiveBayes {
 	
 	// applying Bayes rule and calculating probability of ham or spam. Return true if spam, false if ham
 	public boolean calculateBayes(ArrayList<Word> sms) {
+		// logarithm of P(ham|body text) which will be calculated
+		int probHamGivenEmail = 0;
+		// logarithm of P(spam|body text) which will be calculated
+		int probSpamGivenEmail = 0;
+		// logarithm of P(ham)
+		int probHam = hamEmailTotal/emailTotal;
+		// logarithm of P(spam)
+		int probSpam = spamEmailTotal/emailTotal;
 		
-		float probabilityOfPositiveProduct = 1.0f;
-		float probabilityOfNegativeProduct = 1.0f;
+		probHamGivenEmail = probHam + probEmailGivenHam;
+		probSpamGivenEmail = probSpam + probEmailGivenSpam;
 		
-		for (int i = 0; i < sms.size(); i++) {
-			Word word = (Word) sms.get(i);
-			probabilityOfPositiveProduct *= word.getProbOfSpam();
-			probabilityOfNegativeProduct *= (1.0f - word.getProbOfSpam());
-		}
-		
-		float probOfSpam = probabilityOfPositiveProduct / (probabilityOfPositiveProduct + probabilityOfNegativeProduct);
-		
-		if(probOfSpam > 0.50f) {
+		// email is ham
+		if(probHamGivenEmail > probSpamGivenEmail) {
 			return true;
-		}		
+		}	
+		// email is spam
 		else {
 			return false;
 		}
 	}
 	
 	// print accuracy of the Naive Bayes algorithm
-	public void accuracy(int spamCount, int spamTotal, int hamCount, int hamTotal) {
+	public void accuracy(int spamCount, int spamEmailTotal, int hamCount, int hamEmailTotal) {
 		
 		// spam results from training data
-		System.out.println("The number of spam files found within the training data was: " + spamTotal);
+		System.out.println("The number of spam files found within the training data was: " + spamEmailTotal);
 		
 		// ham results from training data
-		System.out.println("The number of ham files found within the training data was: " + hamTotal);
+		System.out.println("The number of ham files found within the training data was: " + hamEmailTotal);
 		
 		// spam results from test data
 		System.out.println("The number of spam files found within the test data was: " + spamCount);
@@ -207,7 +221,7 @@ public class NaiveBayes {
 		System.out.println("The number of ham files found within the test data was: " + hamCount);
 		
 		// print the accuracy of the algorithm (number of correctly classified messages/total number of messages in the set)
-		float accuracyAmount = (((float)spamCount + (float)hamCount)/(spamTotal + hamTotal))*100;
+		float accuracyAmount = (((float)spamCount + (float)hamCount)/(spamEmailTotal + hamEmailTotal))*100;
 		
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
