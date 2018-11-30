@@ -184,13 +184,13 @@ public class NaiveBayes {
 	// applying Bayes rule and calculating probability of ham or spam. Return true if spam, false if ham
 	public boolean calculateBayes(ArrayList<Word> sms) {
 		// logarithm of P(ham|body text) which will be calculated
-		int probHamGivenEmail = 0;
+		float probHamGivenEmail = 0;
 		// logarithm of P(spam|body text) which will be calculated
-		int probSpamGivenEmail = 0;
+		float probSpamGivenEmail = 0;
 		// logarithm of P(ham)
-		int probHam = hamEmailTotal/emailTotal;
+		float probHam = (float) Math.log(hamEmailTotal/emailTotal);
 		// logarithm of P(spam)
-		int probSpam = spamEmailTotal/emailTotal;
+		float probSpam = (float) Math.log(spamEmailTotal/emailTotal);
 		
 		probHamGivenEmail = probHam + probEmailGivenHam;
 		probSpamGivenEmail = probSpam + probEmailGivenSpam;
