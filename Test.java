@@ -1,6 +1,7 @@
+// test driver for kNN and Naive Bayes classifiers
 import java.util.Scanner;
 
-public class Test {
+public class MiniProjectTest {
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -49,9 +50,8 @@ public class Test {
 			
 			String path = input.substring(17);
 			NaiveBayes naivebayes = new NaiveBayes();	
-			int spamTotal = naivebayes.train(path + "/train.zip");
-			int spamCount = naivebayes.filter(path + "/test.zip");
-			naivebayes.accuracy(spamCount, spamTotal);
+			naivebayes.train(path + "/train.zip");
+			naivebayes.test(path + "/test.zip");
 		}
 		scanner.close();
 	}
