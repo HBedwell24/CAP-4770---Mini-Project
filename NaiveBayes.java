@@ -18,17 +18,25 @@ import java.util.zip.ZipFile;
 
 public class NaiveBayes {
 	
-	// global variables
+	// email totals in training set
 	int spamEmailTotal = 0;
 	int hamEmailTotal = 0;
 	int emailTotal = 0;
+	
 	int totalSpamCount = 0;
 	int totalHamCount = 0;
 	int spamCount = 0;
 	int hamCount = 0;
-	int probEmailGivenHam = 0;
-	int probEmailGivenSpam = 0;	
 	
+	// probabilities for classification
+	float probEmailGivenHam = 0.0f;		// log P(email content|ham)
+	float probEmailGivenSpam = 0.0f;	// log P(email content|spam)
+	float probHamGivenEmail = 0.0f;		// log P(ham|email content)
+	float probSpamGivenEmail = 0.0f;	// log P(spam|email content)
+	float probHam;						// log P(ham)
+	float probSpam; 					// log P(spam)
+	
+	// hash map to store individual words and types
 	HashMap<String, Word> words = new HashMap<String, Word>();
 	
 	// transforms the train data by tokenization and adds spam/ham labels according to file name
@@ -115,10 +123,10 @@ public class NaiveBayes {
 			line = in.readLine();	
 		}
 		in.close();
-		// loop through each word in the key set
+		// loop through each word in the Hash Map, and add the probability of ham/spam to each word
 		for (String key : words.keySet()) {			
-			probEmailGivenSpam += words.get(key).calculateWordSpamProbability(totalSpamCount, words.size());
-			probEmailGivenHam += words.get(key).calculateWordHamProbability(totalHamCount, words.size());
+			words.get(key).calculateWordSpamProbability(totalSpamCount, words.size());
+			words.get(key).calculateWordHamProbability(totalHamCount, words.size());
 		}
 	}
 	
@@ -160,7 +168,7 @@ public class NaiveBayes {
 		accuracy(spamCount, spamEmailTotal, hamCount, hamEmailTotal);
 	}
 
-	// make an arraylist of all words in an sms, set probability of spam to 0.4 if word is not known
+	// make an arraylist of all words in an sms
 	public ArrayList<Word> makeWordList(String sms) {
 		
 		ArrayList<Word> wordList = new ArrayList<Word>();
@@ -174,7 +182,6 @@ public class NaiveBayes {
 			}
 			else {
 				w = new Word(word);
-				w.setProbOfSpam(0.4f);
 			}
 			wordList.add(w);
 		}
@@ -183,14 +190,15 @@ public class NaiveBayes {
 	
 	// applying Bayes rule and calculating probability of ham or spam. Return true if spam, false if ham
 	public boolean calculateBayes(ArrayList<Word> sms) {
-		// logarithm of P(ham|body text) which will be calculated
-		float probHamGivenEmail = 0;
-		// logarithm of P(spam|body text) which will be calculated
-		float probSpamGivenEmail = 0;
-		// logarithm of P(ham)
-		float probHam = (float) Math.log(hamEmailTotal/emailTotal);
-		// logarithm of P(spam)
-		float probSpam = (float) Math.log(spamEmailTotal/emailTotal);
+		
+		probHam = (float) Math.log(hamEmailTotal/emailTotal);
+		probSpam = (float) Math.log(spamEmailTotal/emailTotal);
+		
+		for (int i = 0; i < sms.size(); i++) {
+			Word word = (Word) sms.get(i);
+			probEmailGivenSpam += word.getProbWordGivenSpam();
+			probEmailGivenHam += word.getProbWordGivenHam();		
+		}
 		
 		probHamGivenEmail = probHam + probEmailGivenHam;
 		probSpamGivenEmail = probSpam + probEmailGivenSpam;
@@ -225,6 +233,6 @@ public class NaiveBayes {
 		
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
-		System.out.println("The Naive Bayes algorithm successfully predicted " + df.format(accuracyAmount) + "% of the spam emails found in the test set!");
+		System.out.println("The Naive Bayes algorithm successfully predicted " + df.format(accuracyAmount) + "% of the emails found in the test set!");
 	}
 }
