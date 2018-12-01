@@ -56,7 +56,6 @@ while sys.argv[1] != "python" || sys.argv[2] != "classify":
     print("Invalid command entered! Please try again!")
     
 if sys.arv[3] == "SVM":
-    
     # Create a dictionary of words with its frequency
     train_dir = sys.argv[4]
     dictionary = make_Dictionary(train_dir)
@@ -78,9 +77,9 @@ if sys.arv[3] == "SVM":
     result2 = model2.predict(test_matrix)
     matrix = confusion_matrix(test_labels, result2)
     print (matrix)
-}
+
 elif sys.argv[3] == "RFC":
-    
+    # Create a dictionary of words with its frequency
     train_dir = sys.argv[4]
     dictionary = make_Dictionary(train_dir)
     print "reading and processing emails from file."
@@ -93,4 +92,4 @@ elif sys.argv[3] == "RFC":
     predicted_labels = model.predict(test_feature_matrix)
     print "FINISHED classifying. accuracy score : "
     print accuracy_score(test_labels, predicted_labels)
-}
+
