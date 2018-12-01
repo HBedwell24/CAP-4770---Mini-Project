@@ -52,10 +52,8 @@ from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
 from sklearn.svm import SVC, NuSVC, LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 
-while sys.argv[1] != "python" || sys.argv[2] != "classify":
-    print("Invalid command entered! Please try again!")
-    
 if sys.arv[3] == "SVM":
+    
     # Create a dictionary of words with its frequency
     train_dir = sys.argv[4]
     dictionary = make_Dictionary(train_dir)
@@ -79,17 +77,17 @@ if sys.arv[3] == "SVM":
     print (matrix)
 
 elif sys.argv[3] == "RFC":
-    # Create a dictionary of words with its frequency
+    
     train_dir = sys.argv[4]
     dictionary = make_Dictionary(train_dir)
-    print "reading and processing emails from file."
-    features_matrix, labels = extract_features(TRAIN_DIR)
-    test_feature_matrix, test_labels = extract_features(TEST_DIR)
+    
+    test_dir = "C:\data\test.zip"
+    features_matrix, labels = extract_features(train_dir)
+    test_feature_matrix, test_labels = extract_features(test_dir)
     model = RandomForestClassifier()
-    print "Training model."
+    
     #train model
     model.fit(features_matrix, labels)
     predicted_labels = model.predict(test_feature_matrix)
-    print "FINISHED classifying. accuracy score : "
-    print accuracy_score(test_labels, predicted_labels)
-
+    score = accuracy_score(test_labels, predicted_labels)
+    print (score)
