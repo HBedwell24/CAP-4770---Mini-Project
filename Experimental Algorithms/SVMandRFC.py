@@ -12,8 +12,7 @@ def make_Dictionary(train_dir):
         dictionary = Counter(all_words)
         
         # Transform the data
-        list_to_remove = dictionary.keys()
-        for item in list_to_remove:
+        for item in list(dictionary):
             if item.isalpha() == False: 
                 del dictionary[item]
             elif len(item) == 1:
@@ -43,17 +42,17 @@ def extract_features(test_dir):
 
 # Main method
 from zipfile import ZipFile
+from __future__ import print_function
 import os
-import sys
 import numpy as np
 from collections import Counter
 from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
 from sklearn.svm import SVC, NuSVC, LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 
-argument = input("Please select an algorithm to classify the data (SVM/RFC): ")
+algorithm = input("Please select an algorithm to classify the data (SVM/RFC): ")
 
-if argument == "SVM":
+if algorithm == "SVM":
     
     # Create a dictionary of words with its frequency
     train_dir = input("Please list a directory that contains both your train and test data: ")
@@ -66,17 +65,17 @@ if argument == "SVM":
     train_matrix = extract_features(train_dir)
 
     # Training SVM
-    model2 = LinearSVC()
-    model2.fit(train_matrix,train_labels)
+    model = LinearSVC()
+    model.fit(train_matrix,train_labels)
 
     # Test the unseen mails for Spam
     test_dir = train_dir + "/test.zip"
     test_matrix = extract_features(test_dir)
     test_labels = np.zeros(260)
     test_labels[130:260] = 1
-    result2 = model2.predict(test_matrix)
-    matrix = confusion_matrix(test_labels, result2)
-    print (matrix)
+    result = model.predict(test_matrix)
+    print ("The Support Vector Machine successfully predicted " + confusion_matrix(test_labels, result) + 
+           "% of the files located within the testing data.")
 
 elif argument == "RFC":
     
@@ -90,8 +89,8 @@ elif argument == "RFC":
     test_feature_matrix, test_labels = extract_features(test_dir)
     model = RandomForestClassifier()
     
-    #train model
+    # Test the unseen mails for Spam
     model.fit(features_matrix, labels)
     predicted_labels = model.predict(test_feature_matrix)
-    score = accuracy_score(test_labels, predicted_labels)
-    print (score)
+    print ("The Random Forest Classifier successfully predicted " + accuracy_score(test_labels, predicted_labels) + 
+           "% of the files located within the testing data.")
