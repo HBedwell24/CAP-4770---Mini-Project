@@ -286,5 +286,11 @@ public class NaiveBayes {
 		System.out.println("The Naive Bayes algorithm successfully predicted " + df.format(accuracyMeasure) + "% of the emails found in the test set!");
 		time = System.currentTimeMillis()-time;
 		System.out.println("Time: " + time/1000d + "s");
+		
+		// delete files so data isn't appended during future executions
+		File file = new File("train.txt");
+		file.delete();
+		File file2 = new File("test.txt");
+		file2.delete();
 	}
 }
