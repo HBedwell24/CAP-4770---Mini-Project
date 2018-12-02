@@ -22,7 +22,7 @@ def make_Dictionary(train_dir):
     return dictionary
 
 # Function to transform the text data found into a features matrix, that can then be used accordingly
-def extractSVMFeatures(test_dir): 
+def extractSVMFeatures(mail_dir): 
     docID = 0;   
     with ZipFile(test_dir, "r") as z:
         features_matrix = np.zeros((len(z.namelist()),3000))
@@ -42,7 +42,7 @@ def extractSVMFeatures(test_dir):
         return features_matrix
     
 # Function to transform the text data found into a features matrix and train labels, that can then be used accordingly
-def extractRFCFeatures(test_dir): 
+def extractRFCFeatures(mail_dir): 
     docID = 0;
     count = 0;  
     with ZipFile(test_dir, "r") as z:
