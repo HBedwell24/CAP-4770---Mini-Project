@@ -49,19 +49,20 @@ from collections import Counter
 from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
 from sklearn.svm import SVC, NuSVC, LinearSVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
 
 algorithm = input("Please select an algorithm to classify the data (SVM/RFC): ")
 
 if algorithm == "SVM":
     
     # Create a dictionary of words with its frequency
-    train_dir = input("Please list a directory that contains both your train and test data: ")
-    train_dir = train_dir + "/train.zip"
+    directory = input("Please list a directory that contains both your train and test data: ")
+    train_dir = directory + "/train.zip"
     dictionary = make_Dictionary(train_dir)
 
     # Prepare feature vectors per training mail and its labels
-    train_labels = np.zeros(702)
-    train_labels[351:701] = 1
+    train_labels = np.zeros(300)
+    train_labels[150:299] = 1
     train_matrix = extract_features(train_dir)
 
     # Training SVM
@@ -69,10 +70,10 @@ if algorithm == "SVM":
     model.fit(train_matrix,train_labels)
 
     # Test the unseen mails for Spam
-    test_dir = train_dir + "/test.zip"
+    test_dir = directory + "/test.zip"
     test_matrix = extract_features(test_dir)
-    test_labels = np.zeros(260)
-    test_labels[130:260] = 1
+    test_labels = np.zeros(201)
+    test_labels[100:200] = 1
     result = model.predict(test_matrix)
     print ("The Support Vector Machine successfully predicted " + confusion_matrix(test_labels, result) + 
            "% of the files located within the testing data.")
