@@ -96,7 +96,7 @@ public class NaiveBayes {
 		transformTrainData();
 		BufferedReader in = new BufferedReader(new FileReader("train.txt"));
 		String line;
-		while ((line = in.readLine()) != null){
+		while ((line = in.readLine()) != null) {
 			if (!line.equals("")){
 				String type = line.split("\t")[0];
 				String sms = line.split("\t")[1];
@@ -243,10 +243,18 @@ public class NaiveBayes {
 		probHam = (float) Math.log(actualHamEmailTotal/actualEmailTotal);
 		probSpam = (float) Math.log(actualSpamEmailTotal/actualEmailTotal);
 		
+		// loop through words in the test set
 		for (int i = 0; i < sms.size(); i++) {
 			Word word = (Word) sms.get(i);
-			probEmailGivenSpam += word.getProbWordGivenSpam();
-			probEmailGivenHam += word.getProbWordGivenHam();		
+			// if the hash map contains the word, add their probabilities
+			if(words.containsKey(word)) {
+				probEmailGivenSpam += word.getProbWordGivenSpam();
+				probEmailGivenHam += word.getProbWordGivenHam();	
+			}
+			else {
+				probEmailGivenSpam = (float) Math.log((0 + 1)/(wordSpamCountInEmails + words.size()));
+				probEmailGivenHam = (float) Math.log((0 + 1)/(wordHamCountInEmails + words.size()));
+			}
 		}
 		
 		probHamGivenEmail = probHam + probEmailGivenHam;
