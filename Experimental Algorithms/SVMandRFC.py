@@ -123,5 +123,5 @@ elif algorithm == "RFC":
     model = RandomForestClassifier()
     model.fit(features_matrix, labels)
     predicted_labels = model.predict(test_feature_matrix)
-    print ("The Random Forest Classifier successfully predicted " + (double(accuracy_score(test_labels, predicted_labels)) * 100) + 
+    print ("The Random Forest Classifier successfully predicted " + str(accuracy_score(test_labels, predicted_labels)) + 
            "% of the files located within the testing data.")
