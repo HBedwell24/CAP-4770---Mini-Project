@@ -1,8 +1,8 @@
 public class classify {
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception { // main method
 		
-		// check input string for prefix "java classify knn" and parse parameters
+		// check input string for arguments and parse parameters
 		if(args[0] == "knn" && args[1] != null && args[2] != null) {
 			
 			String charNum = args[1];
@@ -12,10 +12,9 @@ public class classify {
 			
 			knn.loadtrainData(path + "/train.zip");
 			knn.loadtestData(path + "/test.zip");
-		    knn.cosineSimilarity();
+		    	knn.cosineSimilarity();
 		}
 	
-		// check input string for prefix "java classify NB" and parse parameters
 		else if (args[0] == "NB" && args[1] != null) {
 			
 			String path = args[1];
