@@ -13,20 +13,19 @@ def make_Dictionary(train_dir):
         
         # Transform the data
         list_to_remove = dictionary.keys()
-    for item in list_to_remove:
-        if item.isalpha() == False: 
-            del dictionary[item]
-        elif len(item) == 1:
-            del dictionary[item]
+        for item in list_to_remove:
+            if item.isalpha() == False: 
+                del dictionary[item]
+            elif len(item) == 1:
+                del dictionary[item]
     dictionary = dictionary.most_common(3000)
-        
     return dictionary
 
 def extract_features(test_dir): 
-    features_matrix = np.zeros((len(files),3000))
     docID = 0;
     all_words = []   
     with ZipFile(test_dir, "r") as z:
+        features_matrix = np.zeros((len(z.namelist()),3000))
         for filename in z.namelist():
             if not os.path.isdir(filename):
                 with z.open(filename) as f:
@@ -52,10 +51,13 @@ from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
 from sklearn.svm import SVC, NuSVC, LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 
-if sys.arv[3] == "SVM":
+argument = input("Please select an algorithm to classify the data (SVM/RFC): ")
+
+if argument == "SVM":
     
     # Create a dictionary of words with its frequency
-    train_dir = sys.argv[4]
+    train_dir = input("Please list a directory that contains both your train and test data: ")
+    train_dir = train_dir + "/train.zip"
     dictionary = make_Dictionary(train_dir)
 
     # Prepare feature vectors per training mail and its labels
@@ -68,7 +70,7 @@ if sys.arv[3] == "SVM":
     model2.fit(train_matrix,train_labels)
 
     # Test the unseen mails for Spam
-    test_dir = "C:\data\test.zip"
+    test_dir = train_dir + "/test.zip"
     test_matrix = extract_features(test_dir)
     test_labels = np.zeros(260)
     test_labels[130:260] = 1
@@ -76,12 +78,14 @@ if sys.arv[3] == "SVM":
     matrix = confusion_matrix(test_labels, result2)
     print (matrix)
 
-elif sys.argv[3] == "RFC":
+elif argument == "RFC":
     
-    train_dir = sys.argv[4]
+    # Create a dictionary of words with its frequency
+    train_dir = input("Please list a directory that contains both your train and test data: ")
+    train_dir = train_dir + "/train.zip"
     dictionary = make_Dictionary(train_dir)
     
-    test_dir = "C:\data\test.zip"
+    test_dir = train_dir + "/test.zip"
     features_matrix, labels = extract_features(train_dir)
     test_feature_matrix, test_labels = extract_features(test_dir)
     model = RandomForestClassifier()
