@@ -238,7 +238,8 @@ public class NaiveBayes {
 		return wordList;
 	}
 	
-	// applying Bayes rule and calculating probability of ham or spam. Return true if spam, false if ham
+	// applying Bayes rule and calculating probability of ham or spam
+	// return true if email is ham, false if email is spam
 	public boolean calculateBayes(ArrayList<Word> sms) {
 		
 		probHam = (float) Math.log(actualHamEmailTotal/actualEmailTotal);
@@ -252,9 +253,10 @@ public class NaiveBayes {
 				probEmailGivenSpam += word.getProbWordGivenSpam();
 				probEmailGivenHam += word.getProbWordGivenHam();	
 			}
+			// if the hash map does not contain the word, set the 
 			else {
-				probEmailGivenSpam = (float) Math.log((0 + 1)/(wordSpamCountInEmails + words.size()));
-				probEmailGivenHam = (float) Math.log((0 + 1)/(wordHamCountInEmails + words.size()));
+				word.setProbWordGivenSpam(0, 0, words.size());
+				word.setProbWordGivenHam(0, 0, words.size());
 			}
 		}
 		
