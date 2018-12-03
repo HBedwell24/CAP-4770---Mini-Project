@@ -195,6 +195,7 @@ public class NaiveBayes {
 		        // increment number of email files
 				actualEmailTotal++;
 				
+				// create word list from test set
 				ArrayList<Word> sms = makeWordList(line);
 				boolean isSpam = calculateBayes(sms);
 				if(isSpam == true) {
@@ -247,7 +248,7 @@ public class NaiveBayes {
 		for (int i = 0; i < sms.size(); i++) {
 			Word word = (Word) sms.get(i);
 			// if the hash map contains the word, add their probabilities
-			if(words.containsKey(word)) {
+			if(words.containsValue(word)) {
 				probEmailGivenSpam += word.getProbWordGivenSpam();
 				probEmailGivenHam += word.getProbWordGivenHam();	
 			}
@@ -296,9 +297,9 @@ public class NaiveBayes {
 		System.out.println("Time: " + time/1000d + "s");
 		
 		// delete files so data isn't appended during future executions
-		File file = new File("train.txt");
-		file.delete();
-		File file2 = new File("test.txt");
-		file2.delete();
+		File trainFile = new File("train.txt");
+		trainFile.delete();
+		File testFile = new File("test.txt");
+		testFile.delete();
 	}
 }
