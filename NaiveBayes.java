@@ -91,7 +91,7 @@ public class NaiveBayes {
 	    trainZipFile.close();
 	}
 
-	// uses a train-file to make a hashmap containing all words, and their probability of being spam
+	// uses a train-file to make a hash map containing all words, and their probability of being spam
 	public void train() throws IOException {		
 		transformTrainData();
 		BufferedReader in = new BufferedReader(new FileReader("train.txt"));
@@ -130,7 +130,7 @@ public class NaiveBayes {
 			}	
 		}
 		in.close();
-		// loop through each word in the Hash Map, and add the probability of ham/spam to each word
+		// loop through each word in the Hash Map, and calculate the probability of ham/spam for each word
 		for (String key : words.keySet()) {			
 			words.get(key).calculateWordSpamProbability(wordSpamCountInEmails, words.size());
 			words.get(key).calculateWordHamProbability(wordHamCountInEmails, words.size());
@@ -181,7 +181,7 @@ public class NaiveBayes {
 		BufferedReader in = new BufferedReader(new FileReader("test.txt"));
 		String line;
 		while((line = in.readLine()) != null) {
-			if (!line.equals("")) {
+			if(!line.equals("")) {
 				String type = line.split("\t")[0];
 		        
 				if(type.equals("ham")) {
@@ -197,24 +197,25 @@ public class NaiveBayes {
 				
 				// create word list from test set
 				ArrayList<Word> sms = makeWordList(line);
-				boolean isSpam = calculateBayes(sms);
-				if(isSpam == true) {
-					// increment number of ham files in test set
-					predictedHamEmailTotal++;
-				}
-				else if (isSpam == false) {
-					// increment number of spam files in training set
-					predictedSpamEmailTotal++;
-				}
-				if(predictedHamEmailTotal == actualHamEmailTotal) {
-					correctClassification++;
-				}
-				else {
-					incorrectClassification++;
-				}
+				calculateWordProbabilities(sms);				
 			}					
 		}
 		in.close();
+		boolean isSpam = calculateBayesTheorem();
+		if(isSpam == true) {
+			// increment number of ham files in test set
+			predictedHamEmailTotal++;
+		}
+		else if (isSpam == false) {
+			// increment number of spam files in training set
+			predictedSpamEmailTotal++;
+		}
+		if(predictedHamEmailTotal == actualHamEmailTotal) {
+			correctClassification++;
+		}
+		else {
+			incorrectClassification++;
+		}		
 		accuracy(correctClassification, incorrectClassification);
 	}
 
@@ -240,25 +241,30 @@ public class NaiveBayes {
 	
 	// applying Bayes rule and calculating probability of ham or spam
 	// return true if email is ham, false if email is spam
-	public boolean calculateBayes(ArrayList<Word> sms) {
-		
-		probHam = (float) Math.log(actualHamEmailTotal/actualEmailTotal);
-		probSpam = (float) Math.log(actualSpamEmailTotal/actualEmailTotal);
+	public void calculateWordProbabilities(ArrayList<Word> sms) {
 		
 		// loop through words in the test set
 		for (int i = 0; i < sms.size(); i++) {
 			Word word = (Word) sms.get(i);
+			Word w = null;
 			// if the hash map contains the word, add their probabilities
 			if(words.containsValue(word)) {
-				probEmailGivenSpam += word.getProbWordGivenSpam();
-				probEmailGivenHam += word.getProbWordGivenHam();	
+				w = (Word) words.get(word);
+				probEmailGivenSpam += w.getProbWordGivenSpam();
+				probEmailGivenHam += w.getProbWordGivenHam();	
 			}
 			// if the hash map does not contain the word, set the 
 			else {
 				probEmailGivenSpam += (float) Math.log((0 + 1)/(0 + words.size()));
 				probEmailGivenHam += (float) Math.log((0 + 1)/(0 + words.size()));
 			}
-		}
+		}		
+	}
+	
+	public boolean calculateBayesTheorem() {
+		
+		probHam = (float) Math.log(actualHamEmailTotal/actualEmailTotal);
+		probSpam = (float) Math.log(actualSpamEmailTotal/actualEmailTotal);
 		
 		probHamGivenEmail = probHam + probEmailGivenHam;
 		probSpamGivenEmail = probSpam + probEmailGivenSpam;
