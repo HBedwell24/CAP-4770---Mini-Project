@@ -8,11 +8,8 @@ public class classify {
 			String charNum = args[1];
 			int k = Integer.parseInt(charNum);
 			String path = args[2];
-			kNN knn = new kNN(k);
-			
-			knn.loadtrainData(path + "/train.zip");
-			knn.loadtestData(path + "/test.zip");
-		    	knn.cosineSimilarity();
+			kNN knn = new kNN(k, path);
+			knn.kNNaccuracy();
 		}
 	
 		else if (args[0] == "NB" && args[1] != null) {
