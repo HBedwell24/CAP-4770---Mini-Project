@@ -1,4 +1,7 @@
-// Reference URL: https://github.com/kinejohnsrud/naive-bayesian-spam-filter/tree/master/spam-filter/src/bayes
+/* Author: Kine Johnsrud
+   Repository Name: naive-bayesian-spam-filter
+   URL: https://github.com/kinejohnsrud/naive-bayesian-spam-filter/tree/master/spam-filter/src/bayes
+*/
 
 import java.io.BufferedReader;
 import java.io.File;
