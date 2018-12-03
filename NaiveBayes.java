@@ -136,7 +136,15 @@ public class NaiveBayes {
 		// loop through each word in the Hash Map, and calculate the probability of ham/spam for each word
 		for (String key : words.keySet()) {			
 			words.get(key).calculateWordSpamProbability(wordSpamCountInEmails, words.size());
+			System.out.println("Probability of " + words.get(key).getWord() + " given spam is " + words.get(key).getProbWordGivenSpam());
 			words.get(key).calculateWordHamProbability(wordHamCountInEmails, words.size());
+			System.out.println("Probability of " + words.get(key).getWord() + " given ham is " + words.get(key).getProbWordGivenHam());
+			
+			System.out.println("Spam count of " + words.get(key).getWord() + " is " + words.get(key).getSpamCount());
+			System.out.println("Ham count of " + words.get(key).getWord() + " is " + words.get(key).getHamCount());
+			System.out.println("Word spam count in emails is " + wordSpamCountInEmails);
+			System.out.println("Word ham count in emails is " + wordHamCountInEmails);
+			System.out.println("Number of unique words " + words.size() + "\n");
 		}
 	}
 	
@@ -251,12 +259,10 @@ public class NaiveBayes {
 		// loop through words in the test set
 		for (int i = 0; i < sms.size(); i++) {
 			Word word = (Word) sms.get(i);
-			Word w = null;
 			// if the hash map contains the word, add their probabilities
 			if(words.containsValue(word)) {
-				w = (Word) words.get(word);
-				probEmailGivenSpam += w.getProbWordGivenSpam();
-				probEmailGivenHam += w.getProbWordGivenHam();	
+				probEmailGivenSpam += word.getProbWordGivenSpam();
+				probEmailGivenHam += word.getProbWordGivenHam();	
 			}
 			// if the hash map does not contain the word, set the 
 			else {
