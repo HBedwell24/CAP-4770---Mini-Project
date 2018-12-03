@@ -184,13 +184,15 @@ public class NaiveBayes {
 			if(!line.equals("")) {
 				String type = line.split("\t")[0];
 		        
-				if(type.equals("ham")) {
+				if(type.equals("spam")) {
 					// increment number of spam email files
 		        	actualSpamEmailTotal++;
+		        	line.split("spam");
 				}
-				else if(type.equals("spam")) {
+				else if(type.equals("ham")) {
 					// increment number of ham email files
 		        	actualHamEmailTotal++;
+		        	line.split("ham");
 				}		
 		        // increment number of email files
 				actualEmailTotal++;
