@@ -26,12 +26,20 @@ public class kNN {
   public static int emailCountTrain = 0;
   public static int testCount = 0;
   public static int trainCount = 0;
+  String file_path;
+  int k_value;
+  
+  // kNN constructor
+  public kNN (int k, String path) {
+		file_path = path;
+		k_value = k;
+  }
 
-  public void kNNaccuracy(String path, int k) throws IOException {
+  public void kNNaccuracy() throws IOException {
 
     // All files in testing and training data in the form of strings
-    train = read(path + "/train.zip");
-    test = read(path + "/test.zip");
+    train = read(file_path + "/train.zip");
+    test = read(file_path + "/test.zip");
 
     emailCountTrain = trainCount - spamCountTrain;
     emailCountTest = testCount - spamCountTest;
@@ -67,19 +75,9 @@ public class kNN {
       listOfMapsTest.add(countOccurence(strings));
     }
     // Gets cosine similarity and accuracy for each K value
-    cosineSimilarity(k);
-    System.out.print("When k = " + k + ", the accuracy of kNN relative to the test data is ");
-    getAccuracy(path);
-    
-    cosineSimilarity(1);
-    System.out.print("When k = 1, the accuracy of kNN relative to the test data is ");
-    getAccuracy(path);
-    cosineSimilarity(3);
-    System.out.print("When k = 3, the accuracy of kNN relative to the test data is ");
-    getAccuracy(path);
-    cosineSimilarity(5);
-    System.out.print("When k = 5, the accuracy of kNN relative to the test data is ");
-    getAccuracy(path);
+    cosineSimilarity(k_value);
+    System.out.print("When k = " + k_value + ", the accuracy of kNN relative to the test data is ");
+    getAccuracy(file_path);
  }
   
  // Reads folders for training or testing data.
