@@ -1,55 +1,40 @@
-// test driver for kNN and Naive Bayes classifiers
+// command line test driver for kNN and Naive Bayes
+
 import java.util.Scanner;
 
-public class MiniProjectTest {
+public class classify {
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception { // main method
 		
 		Scanner scanner = new Scanner(System.in);
-		System.out.print(">> ");
-		String input = scanner.nextLine();
+		String algorithm = scanner.nextLine();
 		
-		// while input is invalid, prompt to re-enter input
-		while ((!(input.startsWith("java classify knn"))) && (!(input.startsWith("java classify NB")))) {
-			System.out.println("'" + input + "' is not recognized as an internal or external command, \n" +
-					"operable program or batch file.");
-			scanner = new Scanner(System.in);
-			System.out.print(">> ");
-			input = scanner.nextLine();
-		}
+		System.out.print("Please enter an algorithm for spam classifcation [NB/knn]: ");
+		algorithm = scanner.nextLine();
 		
-		// check input string for prefix "java classify knn" and parse parameters
-		if(input.startsWith("java classify knn")) {
-			
-			while (input.length() <= 17) {
-				System.out.println("Arguments 'k' and 'path' were not provided. Please try again!");
-				scanner = new Scanner(System.in);
-				System.out.print(">> ");
-				input = scanner.nextLine();
-			}
-			
-			char charNum = input.charAt(18);
-			int k = Character.getNumericValue(charNum);
-			String path = input.substring(20);
+		if(algorithm.equals("knn")) {
+			System.out.print("Please enter an integer for k: ");
+			int k = Integer.parseInt(scanner.nextLine());
+			System.out.print("Please enter the relative file path of the dataset: ");
+			String path = scanner.nextLine();
+			System.out.print("\n");
+	
 			kNN knn = new kNN(k, path);
 			knn.kNNaccuracy();
 		}
-	
-		// check input string for prefix "java classify NB" and parse parameters
-		else if (input.startsWith("java classify NB")) {
+		else if(algorithm.equals("NB")) {
+			System.out.print("Please enter the relative file path of the dataset: ");
+			String path = scanner.nextLine();
+			System.out.print("\n");
 			
-			while (input.length() <= 19) {
-				System.out.println("Argument 'path' was not provided. Please try again!");
-				scanner = new Scanner(System.in);
-				System.out.print(">> ");
-				input = scanner.nextLine();
-			}
-			
-			String path = input.substring(17);
+			// check for correct argument (path)			
 			NaiveBayes naivebayes = new NaiveBayes(path);	
 			naivebayes.train();
 			naivebayes.test();
 		}
-		scanner.close();
+		else {
+			System.out.println("Incorrect program input provided! Please re-run the program and follow the format: "
+					+ "'knn' or 'NB', followed by parameters for 'k' and/or 'relative file path' as necessary!");
+		}
 	}
 }
