@@ -22,7 +22,7 @@ def make_Dictionary(train_dir):
     return dictionary
 
 # Function to transform the text data found into a features matrix, that can then be used accordingly
-def extractSVMFeatures(mail_dir): 
+def extractSVMFeatures(test_dir): 
     docID = 0;   
     with ZipFile(test_dir, "r") as z:
         features_matrix = np.zeros((len(z.namelist()),3000))
@@ -42,7 +42,7 @@ def extractSVMFeatures(mail_dir):
         return features_matrix
     
 # Function to transform the text data found into a features matrix and train labels, that can then be used accordingly
-def extractRFCFeatures(mail_dir): 
+def extractRFCFeatures(test_dir): 
     docID = 0;
     count = 0;  
     with ZipFile(test_dir, "r") as z:
@@ -106,8 +106,10 @@ if algorithm == "SVM":
     test_labels = np.zeros(202)
     test_labels[101:201] = 1
     result = model.predict(test_matrix)
-    print ("The test matrix for the Support Vector Machine can be found as follows: " + 
-           str(confusion_matrix(test_labels, result)))
+    accuracy = (accuracy_score(test_labels, result) * 100)
+    accuracy = str(round(accuracy, 2))
+    print ("The Support Vector Machine successfully predicted " + accuracy
+            + "% of the files located within the testing data.")
 
 elif algorithm == "RFC":
     
@@ -123,5 +125,7 @@ elif algorithm == "RFC":
     model = RandomForestClassifier()
     model.fit(features_matrix, labels)
     predicted_labels = model.predict(test_feature_matrix)
-    print ("The Random Forest Classifier successfully predicted " + str(accuracy_score(test_labels, predicted_labels)) + 
+    accuracy = (accuracy_score(test_labels, predicted_labels) * 100)
+    accuracy = str(round(accuracy, 2))
+    print ("The Random Forest Classifier successfully predicted " + accuracy + 
            "% of the files located within the testing data.")
