@@ -255,8 +255,8 @@ public class NaiveBayes {
 			}
 			// if the hash map does not contain the word, set the 
 			else {
-				word.setProbWordGivenSpam(0, 0, words.size());
-				word.setProbWordGivenHam(0, 0, words.size());
+				probEmailGivenSpam += (float) Math.log((0 + 1)/(0 + words.size()));
+				probEmailGivenHam += (float) Math.log((0 + 1)/(0 + words.size()));
 			}
 		}
 		
