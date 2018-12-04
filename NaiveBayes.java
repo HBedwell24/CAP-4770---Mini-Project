@@ -66,7 +66,6 @@ public class NaiveBayes {
 		final Enumeration<? extends ZipEntry> entries = trainZipFile.entries();
 	    while (entries.hasMoreElements()) {
 	        final ZipEntry entry = entries.nextElement();
-	        // System.out.println(entry.getName());
 	        
 	        // if file name starts with "spmsg", add "spam" label to text file
 	        if (entry.getName().startsWith("spmsg")) {
@@ -158,7 +157,6 @@ public class NaiveBayes {
 		final Enumeration<? extends ZipEntry> entries = testZipFile.entries();
 		while (entries.hasMoreElements()) {
 			final ZipEntry entry = entries.nextElement();
-		    // System.out.println(entry.getName());
 		        
 		    // if file name starts with "spmsg", add "spam" label to text file
 		    if (entry.getName().startsWith("spmsg")) {
@@ -267,25 +265,25 @@ public class NaiveBayes {
 			probEmailGivenSpam += word.getProbWordGivenSpam();
 			probEmailGivenHam += word.getProbWordGivenHam();				
 		}
-		System.out.println("Probability of email given spam is " + probEmailGivenSpam);
-		System.out.println("Probability of email given ham is " + probEmailGivenHam + "\n");
+		/*System.out.println("Probability of email given spam is " + probEmailGivenSpam);
+		System.out.println("Probability of email given ham is " + probEmailGivenHam + "\n");*/
 	}
 	
 	// applying Bayes rule and calculating probability of ham or spam
 	// return true if email is ham, false if email is spam
 	public boolean calculateBayesTheorem() {
 		
-		probHam = (float) (Math.log(actualHamEmailTotal)/Math.log(actualEmailTotal));
-		probSpam = (float) (Math.log(actualSpamEmailTotal)/Math.log(actualEmailTotal));
+		probHam = (float) Math.log((actualHamEmailTotal)/(actualEmailTotal));
+		probSpam = (float) Math.log((actualSpamEmailTotal)/(actualEmailTotal));
 		
-		System.out.println("Probability of spam is " + probHam);
-		System.out.println("Probability of ham is " + probSpam + "\n");
+		/*System.out.println("Probability of spam is " + probHam);
+		System.out.println("Probability of ham is " + probSpam + "\n");*/
 		
-		probHamGivenEmail = (float) Math.log10(probHam + probEmailGivenHam);
-		probSpamGivenEmail = (float) Math.log10(probSpam + probEmailGivenSpam);
+		probHamGivenEmail = probHam + probEmailGivenHam;
+		probSpamGivenEmail = probSpam + probEmailGivenSpam;
 		
-		System.out.println("Probability of spam given email is " + probSpamGivenEmail);
-		System.out.println("Probability of ham given email is " + probHamGivenEmail + "\n");
+		/*System.out.println("Probability of spam given email is " + probSpamGivenEmail);
+		System.out.println("Probability of ham given email is " + probHamGivenEmail + "\n");*/
 		
 		// email is ham
 		if(probHamGivenEmail > probSpamGivenEmail) {
