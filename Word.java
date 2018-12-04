@@ -3,21 +3,17 @@
    URL: https://github.com/kinejohnsrud/naive-bayesian-spam-filter/tree/master/spam-filter/src/bayes
 */
 
-import java.math.*;
-
 public class Word {
 	private String word;	// the word itself
 	private int spamCount;	// number of this words appearances in spam messages
 	private int hamCount;	// number of this words appearances in ham messages
 	private float probWordGivenSpam;	// log(P(word[i]|spam)) 
-	private float probWordGivenHam;	// log(P(word[i]|ham))
+	private float probWordGivenHam;		// log(P(word[i]|ham))
 	
 	public Word(String word) {
 		this.word = word;
 		spamCount = 0;
 		hamCount = 0;
-		probWordGivenSpam = 0.0f;
-		probWordGivenHam = 0.0f;
 	}
 	
 	public void countSpam() {
@@ -30,12 +26,12 @@ public class Word {
 	
 	// calculates P(word|spam), using Laplace smoothing
 	public void calculateWordSpamProbability(int totalSpamCount, int numOfDistinctWords) {
-		probWordGivenSpam = ((float) Math.log((spamCount + 1)/(totalSpamCount + numOfDistinctWords)))*(-1);
+		probWordGivenSpam = ((float) (Math.log(spamCount + 1)/Math.log(totalSpamCount + numOfDistinctWords)));
 	}
 	
 	// calculates P(word|ham), using Laplace smoothing
 	public void calculateWordHamProbability(int totalHamCount, int numOfDistinctWords) {
-		probWordGivenHam = ((float) Math.log((hamCount + 1)/(totalHamCount + numOfDistinctWords)))*(-1);
+		probWordGivenHam = ((float) (Math.log(hamCount + 1)/Math.log(totalHamCount + numOfDistinctWords)));
 	}
 
 	public String getWord() {
