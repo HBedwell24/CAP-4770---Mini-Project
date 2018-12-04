@@ -15,8 +15,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -135,8 +133,7 @@ public class NaiveBayes {
 			}	
 		}
 		in.close();
-		
-		// loop through each word in the Hash Map, and calculate the probability of ham/spam for each word
+		// loop through each word in the hash map, and calculate the probability of ham/spam for each word
 		for (String key : words.keySet()) {		
 			words.get(key).calculateWordSpamProbability(wordSpamCountInEmails, words.size());
 			System.out.println("Probability of " + words.get(key).getWord() + " given spam is " + words.get(key).getProbWordGivenSpam());
@@ -148,7 +145,7 @@ public class NaiveBayes {
 			System.out.println("Word spam count in emails is " + wordSpamCountInEmails);
 			System.out.println("Word ham count in emails is " + wordHamCountInEmails);
 			System.out.println("Number of unique words " + words.size() + "\n");
-		}
+		}				
 	}
 	
 	// transforms the test data by tokenization and adds spam/ham labels according to file name
@@ -214,6 +211,7 @@ public class NaiveBayes {
 				// create word list from test set
 				ArrayList<Word> testWords = makeWordList(sms);
 				calculateWordProbabilities(testWords);
+				
 				boolean isSpam = calculateBayesTheorem();
 				if(isSpam == true) {
 					// increment number of ham files in test set
@@ -249,35 +247,27 @@ public class NaiveBayes {
 			}
 			else {
 				w = new Word(word);
+				w.calculateWordSpamProbability(wordSpamCountInEmails, words.size());
+				w.calculateWordHamProbability(wordSpamCountInEmails, words.size());
 			}
 			wordList.add(w);
 		}
 		return wordList;
 	}
 	
-	// applying Bayes rule and calculating probability of ham or spam
-	// return true if email is ham, false if email is spam
+	
 	public void calculateWordProbabilities(ArrayList<Word> sms) {
 		
 		// loop through words in the test set
 		for (int i = 0; i < sms.size(); i++) {
-			// loop through unique words in the training set
-			for(Entry<String, Word> entry : words.entrySet()) {
-				Word word = (Word) sms.get(i);
-				// if the hash map contains the word, add their probabilities
-				if(word.equals(entry.getValue())) {
-					probEmailGivenSpam += entry.getValue().getProbWordGivenSpam();
-					probEmailGivenHam += entry.getValue().getProbWordGivenHam();	
-				}
-				// if the hash map does not contain the word, set the 
-				else {
-					probEmailGivenSpam += (float) Math.log((0 + 1)/(0 + words.size()));
-					probEmailGivenHam += (float) Math.log((0 + 1)/(0 + words.size()));
-				}
-			}
+			Word word = (Word) sms.get(i);
+			probEmailGivenSpam += word.getProbWordGivenSpam();
+			probEmailGivenHam += word.getProbWordGivenHam();				
 		}		
 	}
 	
+	// applying Bayes rule and calculating probability of ham or spam
+	// return true if email is ham, false if email is spam
 	public boolean calculateBayesTheorem() {
 		
 		probHam = (float) Math.log(actualHamEmailTotal/actualEmailTotal);
