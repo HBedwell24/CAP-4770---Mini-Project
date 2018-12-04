@@ -176,7 +176,7 @@ public class kNN {
 
 			  // Calculate the cosine similarity
 			  double cosSim = (dotProd(x, y) / getLength(x, y));
-			  finalList.add(cosSim);// Adds each cosine value to list
+			  finalList.add(cosSim); // Adds each cosine value to list
 		  }
 		 
 		  // Get K nearest neighbors, by finding greatest values in finalList
