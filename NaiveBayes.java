@@ -192,26 +192,26 @@ public class NaiveBayes {
 		transformTestData();
 		BufferedReader in = new BufferedReader(new FileReader("test.txt"));
 		String line;
+		// loop through each email message
 		while((line = in.readLine()) != null) {
 			if(!line.equals("")) {
 				String type = line.split("\t")[0];
-		        
+				String sms = line.split("\t")[1];
+				
 				if(type.equals("spam")) {
 					// increment number of spam email files
 		        	actualSpamEmailTotal++;
-		        	line.split("spam");
 				}
 				else if(type.equals("ham")) {
 					// increment number of ham email files
 		        	actualHamEmailTotal++;
-		        	line.split("ham");
 				}		
 		        // increment number of email files
 				actualEmailTotal++;
 				
 				// create word list from test set
-				ArrayList<Word> sms = makeWordList(line);
-				calculateWordProbabilities(sms);
+				ArrayList<Word> testWords = makeWordList(sms);
+				calculateWordProbabilities(testWords);
 				boolean isSpam = calculateBayesTheorem();
 				if(isSpam == true) {
 					// increment number of ham files in test set
