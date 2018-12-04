@@ -26,12 +26,12 @@ public class Word {
 	
 	// calculates P(word|spam), using Laplace smoothing
 	public void calculateWordSpamProbability(int totalSpamCount, int numOfDistinctWords) {
-		probWordGivenSpam = ((float) (Math.log(spamCount + 1)/Math.log(totalSpamCount + numOfDistinctWords)));
+		probWordGivenSpam = ((float) Math.log((spamCount + 1)/(totalSpamCount + numOfDistinctWords)));
 	}
 	
 	// calculates P(word|ham), using Laplace smoothing
 	public void calculateWordHamProbability(int totalHamCount, int numOfDistinctWords) {
-		probWordGivenHam = ((float) (Math.log(hamCount + 1)/Math.log(totalHamCount + numOfDistinctWords)));
+		probWordGivenHam = ((float) Math.log((hamCount + 1)/(totalHamCount + numOfDistinctWords)));
 	}
 
 	public String getWord() {
