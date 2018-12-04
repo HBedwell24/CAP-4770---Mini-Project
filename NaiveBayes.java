@@ -135,16 +135,16 @@ public class NaiveBayes {
 		in.close();
 		// loop through each word in the hash map, and calculate the probability of ham/spam for each word
 		for (String key : words.keySet()) {		
-			words.get(key).calculateWordSpamProbability(wordSpamCountInEmails, words.size());
-			System.out.println("Probability of " + words.get(key).getWord() + " given spam is " + words.get(key).getProbWordGivenSpam());
+			words.get(key).calculateWordSpamProbability(wordSpamCountInEmails, words.size());			
 			words.get(key).calculateWordHamProbability(wordHamCountInEmails, words.size());
-			System.out.println("Probability of " + words.get(key).getWord() + " given ham is " + words.get(key).getProbWordGivenHam());
 			
-			System.out.println("Spam count of " + words.get(key).getWord() + " is " + words.get(key).getSpamCount());
-			System.out.println("Ham count of " + words.get(key).getWord() + " is " + words.get(key).getHamCount());
+			/*System.out.println("Probability of '" + words.get(key).getWord() + "' given spam is " + words.get(key).getProbWordGivenSpam());
+			System.out.println("Probability of '" + words.get(key).getWord() + "' given ham is " + words.get(key).getProbWordGivenHam());			
+			System.out.println("Spam count of '" + words.get(key).getWord() + "' is " + words.get(key).getSpamCount());
+			System.out.println("Ham count of '" + words.get(key).getWord() + "' is " + words.get(key).getHamCount());
 			System.out.println("Word spam count in emails is " + wordSpamCountInEmails);
 			System.out.println("Word ham count in emails is " + wordHamCountInEmails);
-			System.out.println("Number of unique words " + words.size() + "\n");
+			System.out.println("Number of unique words " + words.size() + "\n");*/
 		}				
 	}
 	
@@ -238,13 +238,16 @@ public class NaiveBayes {
 		
 		ArrayList<Word> wordList = new ArrayList<Word>();
 		
+		// loop through input string and tokenize/split words
 		for (String word : sms.split(" ")) {
 			word = word.replaceAll("\\W", "");
 			word = word.toLowerCase();
 			Word w = null;
+			// if hash map already contains word, get the word and its attributes
 			if(words.containsKey(word)){
 				w = (Word) words.get(word);
 			}
+			// if hash map doesn't contain word, create new word
 			else {
 				w = new Word(word);
 				w.calculateWordSpamProbability(wordSpamCountInEmails, words.size());
@@ -263,18 +266,26 @@ public class NaiveBayes {
 			Word word = (Word) sms.get(i);
 			probEmailGivenSpam += word.getProbWordGivenSpam();
 			probEmailGivenHam += word.getProbWordGivenHam();				
-		}		
+		}
+		System.out.println("Probability of email given spam is " + probEmailGivenSpam);
+		System.out.println("Probability of email given ham is " + probEmailGivenHam + "\n");
 	}
 	
 	// applying Bayes rule and calculating probability of ham or spam
 	// return true if email is ham, false if email is spam
 	public boolean calculateBayesTheorem() {
 		
-		probHam = (float) Math.log(actualHamEmailTotal/actualEmailTotal);
-		probSpam = (float) Math.log(actualSpamEmailTotal/actualEmailTotal);
+		probHam = (float) (Math.log(actualHamEmailTotal)/Math.log(actualEmailTotal));
+		probSpam = (float) (Math.log(actualSpamEmailTotal)/Math.log(actualEmailTotal));
 		
-		probHamGivenEmail = probHam + probEmailGivenHam;
-		probSpamGivenEmail = probSpam + probEmailGivenSpam;
+		System.out.println("Probability of spam is " + probHam);
+		System.out.println("Probability of ham is " + probSpam + "\n");
+		
+		probHamGivenEmail = (float) Math.log10(probHam + probEmailGivenHam);
+		probSpamGivenEmail = (float) Math.log10(probSpam + probEmailGivenSpam);
+		
+		System.out.println("Probability of spam given email is " + probSpamGivenEmail);
+		System.out.println("Probability of ham given email is " + probHamGivenEmail + "\n");
 		
 		// email is ham
 		if(probHamGivenEmail > probSpamGivenEmail) {
@@ -290,17 +301,17 @@ public class NaiveBayes {
 	public void accuracy(int correctClassification, int incorrectClassification) {
 		
 		// actual count results from test data
-		System.out.println("The actual number of spam emails found within the test data was: " + actualSpamEmailTotal);
+		/*System.out.println("The actual number of spam emails found within the test data was: " + actualSpamEmailTotal);
 		System.out.println("The actual number of ham files found within the test data was: " + actualHamEmailTotal);
-		System.out.println("The actual number of emails found within the test data was: " + actualEmailTotal + "\n");
+		System.out.println("The actual number of emails found within the test data was: " + actualEmailTotal + "\n");*/
 		
 		// predicted count results from test data
-		System.out.println("The predicted number of spam emails found within the test data was: " + predictedSpamEmailTotal);
-		System.out.println("The predicted number of ham files found within the test data was: " + predictedHamEmailTotal + "\n");
+		/*System.out.println("The predicted number of spam emails found within the test data was: " + predictedSpamEmailTotal);
+		System.out.println("The predicted number of ham files found within the test data was: " + predictedHamEmailTotal + "\n");*/
 		
 		// counts used for accuracy measure
-		System.out.println("The correct number of emails classified within the test data was: " + correctClassification);
-		System.out.println("The incorrect number of emails classified within the test data was: " + incorrectClassification + "\n");
+		/*System.out.println("The correct number of emails classified within the test data was: " + correctClassification);
+		System.out.println("The incorrect number of emails classified within the test data was: " + incorrectClassification + "\n");*/
 		
 		// print the accuracy of the algorithm (number of correctly classified messages/total number of messages in the set)
 		float accuracyMeasure = (float) (((correctClassification)/(correctClassification + incorrectClassification + 0.0))*100);
