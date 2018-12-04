@@ -133,8 +133,9 @@ public class NaiveBayes {
 			}	
 		}
 		in.close();
+		
 		// loop through each word in the Hash Map, and calculate the probability of ham/spam for each word
-		for (String key : words.keySet()) {			
+		for (String key : words.keySet()) {		
 			words.get(key).calculateWordSpamProbability(wordSpamCountInEmails, words.size());
 			System.out.println("Probability of " + words.get(key).getWord() + " given spam is " + words.get(key).getProbWordGivenSpam());
 			words.get(key).calculateWordHamProbability(wordHamCountInEmails, words.size());
@@ -169,7 +170,7 @@ public class NaiveBayes {
 		    	pw.print("ham\t");
 		    }
 		        
-		    // read, tokenize, and append words to "train.txt" file
+		    // read, tokenize, and append words to "test.txt" file
 		    InputStream stream = testZipFile.getInputStream(entry);
 		    BufferedReader in = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 		    String line;
@@ -210,29 +211,29 @@ public class NaiveBayes {
 				
 				// create word list from test set
 				ArrayList<Word> sms = makeWordList(line);
-				calculateWordProbabilities(sms);				
+				calculateWordProbabilities(sms);
+				boolean isSpam = calculateBayesTheorem();
+				if(isSpam == true) {
+					// increment number of ham files in test set
+					predictedHamEmailTotal++;
+				}
+				else if (isSpam == false) {
+					// increment number of spam files in training set
+					predictedSpamEmailTotal++;
+				}
+				if(predictedHamEmailTotal == actualHamEmailTotal) {
+					correctClassification++;
+				}
+				else {
+					incorrectClassification++;
+				}		
 			}					
 		}
 		in.close();
-		boolean isSpam = calculateBayesTheorem();
-		if(isSpam == true) {
-			// increment number of ham files in test set
-			predictedHamEmailTotal++;
-		}
-		else if (isSpam == false) {
-			// increment number of spam files in training set
-			predictedSpamEmailTotal++;
-		}
-		if(predictedHamEmailTotal == actualHamEmailTotal) {
-			correctClassification++;
-		}
-		else {
-			incorrectClassification++;
-		}		
 		accuracy(correctClassification, incorrectClassification);
 	}
 
-	// make an arraylist of all words in an sms
+	// make an array list of all words in an email message
 	public ArrayList<Word> makeWordList(String sms) {
 		
 		ArrayList<Word> wordList = new ArrayList<Word>();
@@ -309,6 +310,7 @@ public class NaiveBayes {
 		// print the accuracy of the algorithm (number of correctly classified messages/total number of messages in the set)
 		float accuracyMeasure = (float) (((correctClassification)/(correctClassification + incorrectClassification + 0.0))*100);
 		
+		// convert accuracy to decimal format and get execution time
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
 		System.out.println("The Naive Bayes algorithm successfully predicted " + df.format(accuracyMeasure) + "% of the emails found in the test set!");
