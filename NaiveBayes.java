@@ -15,6 +15,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -259,16 +261,19 @@ public class NaiveBayes {
 		
 		// loop through words in the test set
 		for (int i = 0; i < sms.size(); i++) {
-			Word word = (Word) sms.get(i);
-			// if the hash map contains the word, add their probabilities
-			if(words.containsValue(word)) {
-				probEmailGivenSpam += word.getProbWordGivenSpam();
-				probEmailGivenHam += word.getProbWordGivenHam();	
-			}
-			// if the hash map does not contain the word, set the 
-			else {
-				probEmailGivenSpam += (float) Math.log((0 + 1)/(0 + words.size()));
-				probEmailGivenHam += (float) Math.log((0 + 1)/(0 + words.size()));
+			// loop through unique words in the training set
+			for(Entry<String, Word> entry : words.entrySet()) {
+				Word word = (Word) sms.get(i);
+				// if the hash map contains the word, add their probabilities
+				if(word.equals(entry.getValue())) {
+					probEmailGivenSpam += entry.getValue().getProbWordGivenSpam();
+					probEmailGivenHam += entry.getValue().getProbWordGivenHam();	
+				}
+				// if the hash map does not contain the word, set the 
+				else {
+					probEmailGivenSpam += (float) Math.log((0 + 1)/(0 + words.size()));
+					probEmailGivenHam += (float) Math.log((0 + 1)/(0 + words.size()));
+				}
 			}
 		}		
 	}
