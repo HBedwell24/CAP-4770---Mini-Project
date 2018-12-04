@@ -1,5 +1,3 @@
-// command line test driver for kNN and Naive Bayes
-
 import java.util.Scanner;
 
 public class classify {
@@ -14,14 +12,21 @@ public class classify {
 		
 		if(algorithm.equals("knn")) {
 			System.out.print("Please enter an integer for k: ");
-			int k = Integer.parseInt(scanner.nextLine());
+			String kVal = scanner.nextLine();
+			
+			while(isNumeric(kVal) != true) {
+				System.out.println("'k' value is not of type int. Please try again!");
+				System.out.print("Please enter an integer for k: ");
+				kVal = scanner.nextLine();
+			}
+			int k = Integer.parseInt(kVal);
 			System.out.print("Please enter the relative file path of the dataset: ");
 			String path = scanner.nextLine();
 			System.out.print("\n");
-	
 			kNN knn = new kNN(k, path);
 			knn.kNNaccuracy();
 		}
+		
 		else if(algorithm.equals("NB")) {
 			System.out.print("Please enter the relative file path of the dataset: ");
 			String path = scanner.nextLine();
@@ -32,9 +37,15 @@ public class classify {
 			naivebayes.train();
 			naivebayes.test();
 		}
+		
 		else {
 			System.out.println("Incorrect program input provided! Please re-run the program and follow the format: "
 					+ "'knn' or 'NB', followed by parameters for 'k' and/or 'relative file path' as necessary!");
 		}
+		scanner.close();
 	}
+	
+	public static boolean isNumeric(String s) {  
+	    return s != null && s.matches("[-+]?\\d*\\.?\\d+");  
+	}  
 }
