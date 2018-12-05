@@ -1,3 +1,13 @@
+# References
+# ---------------------------------------------------------------------------------------------------------------
+# Author: Machine Learning in Action
+# Article Title: Email Spam Filtering and Implementation with Python and Scikit-Learn 
+# URL: https://www.kdnuggets.com/2017/03/email-spam-filtering-an-implementation-with-python-and-scikit-learn.html
+#
+# Author: Savan Patel
+# Article Title: Random Forest Classifier
+# URL: https://medium.com/machine-learning-101/chapter-5-random-forest-classifier-56dc7425c3e1
+
 # Main method
 from __future__ import print_function
 from zipfile import ZipFile
