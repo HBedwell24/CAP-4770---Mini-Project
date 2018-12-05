@@ -1,3 +1,15 @@
+# Main method
+from __future__ import print_function
+from zipfile import ZipFile
+import os
+import numpy as np
+from collections import Counter
+from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
+from sklearn.svm import SVC, NuSVC, LinearSVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
+
 # Function to create a dictionary of all the words found within the train data
 def make_Dictionary(train_dir):
     all_words = []   
@@ -68,19 +80,7 @@ def extractRFCFeatures(test_dir):
                         count = count + 1
                     docID = docID + 1
         return features_matrix, train_labels
-    
-# Main method
-from __future__ import print_function
-from zipfile import ZipFile
-import os
-import numpy as np
-from collections import Counter
-from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
-from sklearn.svm import SVC, NuSVC, LinearSVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-
+		
 # Ask the user for input
 algorithm = input("Please select an algorithm to classify the data (SVM/RFC): ")
 
