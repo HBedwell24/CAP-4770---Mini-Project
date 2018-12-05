@@ -86,7 +86,8 @@ algorithm = input("Please select an algorithm to classify the data (SVM/RFC): ")
 
 if algorithm == "SVM":
     
-    cVal = input("Please specify a C amount for LinearSVC to take as a parameter: ")
+    cVal = input("Please enter a positive integer value for penalty parameter C of the error term (default=1.0): ")
+    iterations = input("Please enter the maximum number of iterations to be run (default=1000): ")
     
     # Create a dictionary of words with its frequency
     directory = input("Please list a directory that contains both your train and test data: ")
@@ -99,7 +100,7 @@ if algorithm == "SVM":
     train_matrix = extractSVMFeatures(train_dir)
 
     # Training SVM
-    model = LinearSVC(C = float(cVal))
+    model = LinearSVC(C = float(cVal), max_iter=int(iterations))
     model.fit(train_matrix,train_labels)
 
     # Test the unseen mails for Spam
@@ -115,8 +116,8 @@ if algorithm == "SVM":
 
 elif algorithm == "RFC":
     
-    nEstimate = input("Please enter a positive integer value for n-estimate: ")
-    maxDepth = input("Please enter a positive integer value for max depth: ")
+    nEstimate = input("Please enter a positive integer value for n-estimate (default=10): ")
+    maxDepth = input("Please enter a positive integer value for max depth (default=None): ")
     
     # Create a dictionary of words with its frequency
     directory = input("Please list a directory that contains both your train and test data: ")
