@@ -86,8 +86,7 @@ algorithm = input("Please select an algorithm to classify the data (SVM/RFC): ")
 
 if algorithm == "SVM":
     
-    penaltyVal = input("Please specify a random state value for LinearSVC to take as a parameter: ")
-    tolAmount = input("Please specify a tolerance amount for LinearSVC to take as a parameter: ")
+    cVal = input("Please specify a C amount for LinearSVC to take as a parameter: ")
     
     # Create a dictionary of words with its frequency
     directory = input("Please list a directory that contains both your train and test data: ")
@@ -96,17 +95,17 @@ if algorithm == "SVM":
 
     # Prepare feature vectors per training mail and its labels
     train_labels = np.zeros(300)
-    train_labels[150:299] = 1
+    train_labels[149:299] = 1
     train_matrix = extractSVMFeatures(train_dir)
 
     # Training SVM
-    model = LinearSVC(penalty=penaltyVal, tol=tolAmount)
+    model = LinearSVC(C = float(cVal))
     model.fit(train_matrix,train_labels)
 
     # Test the unseen mails for Spam
     test_dir = directory + "/test.zip"
     test_matrix = extractSVMFeatures(test_dir)
-    test_labels = np.zeros(202)
+    test_labels = np.zeros(201)
     test_labels[101:201] = 1
     result = model.predict(test_matrix)
     accuracy = (accuracy_score(test_labels, result) * 100)
